@@ -4,15 +4,15 @@ services:
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
-    container_name: prometheus
+    container_name: Prometheus
     user: "1000:1000"
     env_file:
-      - /volume1/docker/prometheus/.env
+      - /volume1/docker/Prometheus/.env
     ports:
       - "9090:9090"
     volumes:
-      - /volume1/docker/prometheus/config:/etc/prometheus
-      - /volume1/docker/prometheus/data:/prometheus
+      - /volume1/docker/Prometheus/config:/etc/prometheus
+      - /volume1/docker/Prometheus/data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -23,27 +23,27 @@ services:
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
-    container_name: grafana
+    container_name: Grafana
     user: "472"
     env_file:
-      - /volume1/docker/grafana/.env
+      - /volume1/docker/Grafana/.env
     ports:
       - "3000:3000"
     volumes:
-      - /volume1/docker/grafana/data:/var/lib/grafana
-      - /volume1/docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - /volume1/docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - /volume1/docker/Grafana/data:/var/lib/grafana
+      - /volume1/docker/Grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - /volume1/docker/Grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     depends_on:
-      - prometheus
+      - Prometheus
     networks:
       - metrics
 
   unpoller:
     image: ghcr.io/unpoller/unpoller:latest
     restart: unless-stopped
-    container_name: unpoller
+    container_name: Unpoller
     env_file:
-      - /volume1/docker/unpoller/.env
+      - /volume1/docker/Unpoller/.env
     ports:
       - "9130:9130"
     networks:

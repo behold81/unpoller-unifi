@@ -1,49 +1,65 @@
+version: "3.9"
+
 services:
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
     container_name: prometheus
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "1000:1000"
     env_file:
-      - ./prometheus/.env
+      - /volume1/docker/prometheus/.env
     ports:
-      - '9090:9090'
+      - "9090:9090"
     volumes:
-      - ./prometheus/config:/etc/prometheus
-      - ./prometheus/data:/prometheus
+      - /volume1/docker/prometheus/config:/etc/prometheus
+      - /volume1/docker/prometheus/data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+    networks:
+      - metrics
+
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
     container_name: grafana
-    user: "${UID:-1000}:${GID:-1000}"
+    user: "472"
     env_file:
-      - ./grafana/.env
+      - /volume1/docker/grafana/.env
     ports:
-      - '3000:3000'
+      - "3000:3000"
     volumes:
-      - ./grafana/data:/var/lib/grafana
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - /volume1/docker/grafana/data:/var/lib/grafana
+      - /volume1/docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - /volume1/docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     depends_on:
       - prometheus
+    networks:
+      - metrics
 
   unpoller:
     image: ghcr.io/unpoller/unpoller:latest
     restart: unless-stopped
     container_name: unpoller
     env_file:
-      - ./unpoller/.env
+      - /volume1/docker/unpoller/.env
     ports:
-      - '9130:9130'
+      - "9130:9130"
+    networks:
+      - metrics
 
-# optional log viewer for docker containers
   dozzle:
     image: amir20/dozzle:latest
     restart: unless-stopped
     container_name: dozzle
+    env_file:
+      - /volume1/docker/dozzle/.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    env_file:
-      - ./dozzle/.env
     ports:
-      - '8080:8080'
+      - "8080:8080"
+
+networks:
+  metrics:
+    driver: bridge

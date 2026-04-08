@@ -7,7 +7,7 @@ services:
     container_name: Prometheus
     user: "1000:1000"
     env_file:
-      - /volume1/docker/prometheus/.env
+      - /volume1/@docker/volumes/Portainer/_data/prometheus/.env
     ports:
       - "9090:9090"
     volumes:
@@ -26,7 +26,7 @@ services:
     container_name: Grafana
     user: "472"
     env_file:
-      - /volume1/docker/grafana/env
+      - /volume1/@docker/volumes/Portainer/_data/grafana/env
     ports:
       - "3000:3000"
     volumes:
@@ -43,7 +43,7 @@ services:
     restart: unless-stopped
     container_name: unpoller
     env_file:
-      - /volume1/docker/unpoller/.env
+      - /volume1/@docker/volumes/Portainer/_data/unpoller/.env
     ports:
       - "9130:9130"
     networks:
@@ -54,7 +54,7 @@ services:
     restart: unless-stopped
     container_name: dozzle
     env_file:
-      - /volume1/docker/dozzle/.env
+      - /volume1/@docker/volumes/Portainer/_data/dozzle/.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
